@@ -1,0 +1,13 @@
+node_modules/
+dist/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.DS_Store
+.env
+*.log
+output/*.json
+!output/manifest.json
+.vscode/settings.json
+.idea/

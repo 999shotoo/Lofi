@@ -243,6 +243,10 @@ const onTrackChange = () => {
     vinylBottomText2.textContent = '';
     vinylColor.setAttribute('fill', '#eee');
   }
+
+  if (!player.isRecording) {
+    downloadAudioButton.disabled = !player.currentTrack;
+  }
 };
 player.onTrackChange = onTrackChange;
 
@@ -308,6 +312,7 @@ const repeatButton = document.getElementById('repeat-button') as HTMLButtonEleme
 const shuffleButton = document.getElementById('shuffle-button');
 const volumeButton = document.getElementById('volume-button');
 const recordButton = document.getElementById('record-button');
+const downloadAudioButton = document.getElementById('download-audio-button') as HTMLButtonElement;
 const volumeBar = document.getElementById('volume-bar') as HTMLInputElement;
 
 player.getGain = () => volumeBar.valueAsNumber;
@@ -395,6 +400,29 @@ recordButton.addEventListener('click', async () => {
   }
 });
 
+downloadAudioButton.addEventListener('click', async () => {
+  if (!player.currentTrack) {
+    return;
+  }
+
+  downloadAudioButton.disabled = true;
+  downloadAudioButton.textContent = 'Preparing...';
+  try {
+    await player.downloadCurrentTrackWav();
+  } catch (error) {
+    console.error('Audio export failed', error);
+    downloadAudioButton.textContent = 'Export Failed';
+    setTimeout(() => {
+      downloadAudioButton.disabled = !player.currentTrack;
+      downloadAudioButton.textContent = 'Download Audio';
+    }, 1200);
+    return;
+  } finally {
+    downloadAudioButton.disabled = !player.currentTrack;
+    downloadAudioButton.textContent = 'Download Audio';
+  }
+});
+
 volumeBar.addEventListener('input', () => {
   if (player.muted) {
     volumeButton.click();
@@ -453,3 +481,5 @@ for (const [action, handler] of actionsAndHandlers) {
     console.log(`The media session action ${action}, is not supported`);
   }
 }
+
+updateRecordingState();

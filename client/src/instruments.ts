@@ -230,7 +230,7 @@ export const getInstrument = (instrument: Instrument) => {
   }
 };
 
-export const DefaultFilters = [
+const createDefaultFilters = () => [
   new Tone.Reverb({
     decay: 2,
     wet: 0.2,
@@ -242,7 +242,7 @@ export const getInstrumentFilters = (instrument: Instrument) => {
   switch (instrument) {
     case Instrument.ElectricGuitar: {
       return [
-        ...DefaultFilters,
+        ...createDefaultFilters(),
         new Tone.Filter({
           type: 'highpass',
           frequency: 350,
@@ -253,7 +253,7 @@ export const getInstrumentFilters = (instrument: Instrument) => {
 
     case Instrument.BassGuitar: {
       return [
-        ...DefaultFilters,
+        ...createDefaultFilters(),
         new Tone.Filter({
           type: 'highpass',
           frequency: 300,
@@ -264,7 +264,7 @@ export const getInstrumentFilters = (instrument: Instrument) => {
 
     default:
       return [
-        ...DefaultFilters
+        ...createDefaultFilters()
       ];
   }
 };

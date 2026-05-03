@@ -1,0 +1,22 @@
+{
+  "name": "lofi-generator",
+  "version": "1.0.0",
+  "description": "Script to generate lofi music tracks",
+  "main": "dist/generator.js",
+  "scripts": {
+    "build": "tsc",
+    "generate": "node dist/generator.js",
+    "generate:single": "node dist/generator.js --single",
+    "generate:batch": "node dist/generator.js --batch 10"
+  },
+  "dependencies": {
+    "@tonaljs/tonal": "^4.10.0",
+    "tone": "^14.7.77",
+    "pako": "^2.1.0",
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.5",
+    "@types/node": "^20.0.0"
+  }
+}

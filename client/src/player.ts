@@ -59,6 +59,9 @@ class Player {
    /** Whether the player is currently recording */
    private _isRecording: boolean = false;
 
+  /** Timeout id used by one-click download recording */
+  private _downloadTimeoutId: number | null = null;
+
    get isRecording() {
      return this._isRecording;
    }
@@ -87,12 +90,188 @@ class Player {
    }
 
    pauseRecording() {
+     if (this._downloadTimeoutId) {
+       clearTimeout(this._downloadTimeoutId);
+       this._downloadTimeoutId = null;
+     }
      this.isRecording = false;
    }
 
    startRecording() {
      this.isRecording = true;
    }
+
+   /**
+    * Record from the current position to the end of the current track,
+    * then trigger a file download.
+    */
+   async downloadCurrentTrackAudio() {
+     if (!this.currentTrack || this.isRecording) {
+       return false;
+     }
+
+     const wasPlaying = this.isPlaying;
+     if (!wasPlaying) {
+       this.play();
+     }
+
+     this.startRecording();
+
+     const currentSeconds = Tone.Transport.seconds || 0;
+     const remainingSeconds = Math.max(1, this.currentTrack.length - currentSeconds);
+     const recordingDurationMs = Math.ceil(remainingSeconds * 1000) + 250;
+
+     await new Promise<void>((resolve) => {
+       this._downloadTimeoutId = window.setTimeout(() => {
+         this.pauseRecording();
+         if (!wasPlaying) {
+           this.pause();
+         }
+         resolve();
+       }, recordingDurationMs);
+     });
+
+     return true;
+   }
+
+  /** Download the current track rendered offline as WAV (no live recording). */
+  async downloadCurrentTrackWav() {
+    if (!this.currentTrack) {
+      return false;
+    }
+
+    const track = this.currentTrack;
+    const renderDuration = Math.max(1, track.length);
+
+    const rendered = await Tone.Offline(async ({ transport }) => {
+      transport.bpm.value = track.bpm;
+      transport.swing = track.swing ? 2 / 3 : 0;
+
+      const masterGain = new Tone.Gain(1).toDestination();
+      const samplePlayers = new Map<string, Tone.Player[]>();
+      const instruments = new Map<Instrument, any>();
+
+      for (const [sampleGroupName, sampleIndex] of track.samples) {
+        const sampleGroup = Samples.SAMPLEGROUPS.get(sampleGroupName);
+        if (!sampleGroup) continue;
+
+        const player = new Tone.Player({
+          url: sampleGroup.getSampleUrl(sampleIndex),
+          volume: sampleGroup.volume,
+          loop: true,
+          fadeIn: '8n',
+          fadeOut: '8n'
+        }).chain(...sampleGroup.getFilters(), masterGain);
+
+        if (!samplePlayers.has(sampleGroupName)) {
+          samplePlayers.set(sampleGroupName, Array(sampleGroup.size));
+        }
+        samplePlayers.get(sampleGroupName)[sampleIndex] = player;
+      }
+
+      for (const instrument of track.instruments) {
+        const toneInstrument = getInstrument(instrument)
+          .chain(...getInstrumentFilters(instrument), masterGain);
+        instruments.set(instrument, toneInstrument);
+      }
+
+      await Tone.loaded();
+
+      for (const sampleLoop of track.sampleLoops) {
+        const samplePlayer = samplePlayers.get(sampleLoop.sampleGroupName)?.[sampleLoop.sampleIndex];
+        if (!samplePlayer) continue;
+        samplePlayer.start(sampleLoop.startTime);
+        samplePlayer.stop(sampleLoop.stopTime);
+      }
+
+      for (const noteTiming of track.instrumentNotes) {
+        const instrumentSampler = instruments.get(noteTiming.instrument);
+        if (!instrumentSampler) continue;
+
+        if (noteTiming.duration) {
+          instrumentSampler.triggerAttackRelease(
+            noteTiming.pitch,
+            noteTiming.duration,
+            noteTiming.time,
+            noteTiming.velocity !== undefined ? noteTiming.velocity : 1
+          );
+        } else {
+          instrumentSampler.triggerAttack(
+            noteTiming.pitch,
+            noteTiming.time,
+            noteTiming.velocity !== undefined ? noteTiming.velocity : 1
+          );
+        }
+      }
+
+      transport.start(0);
+    }, renderDuration);
+
+    const renderedAudioBuffer = rendered.get();
+    if (!renderedAudioBuffer) {
+      throw new Error('Offline render did not produce an audio buffer.');
+    }
+
+    const blob = this.audioBufferToWavBlob(renderedAudioBuffer);
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    const safeTitle = (track.title || 'lofi-track').replace(/[^a-zA-Z0-9_-]/g, '_');
+    anchor.download = `${safeTitle}.wav`;
+    anchor.href = url;
+    anchor.click();
+    URL.revokeObjectURL(url);
+
+    return true;
+  }
+
+  private audioBufferToWavBlob(audioBuffer: AudioBuffer): Blob {
+    const channelCount = audioBuffer.numberOfChannels;
+    const sampleRate = audioBuffer.sampleRate;
+    const numFrames = audioBuffer.length;
+    const bytesPerSample = 2;
+    const blockAlign = channelCount * bytesPerSample;
+    const byteRate = sampleRate * blockAlign;
+    const dataSize = numFrames * blockAlign;
+
+    const buffer = new ArrayBuffer(44 + dataSize);
+    const view = new DataView(buffer);
+
+    const writeString = (offset: number, value: string) => {
+      for (let i = 0; i < value.length; i += 1) {
+        view.setUint8(offset + i, value.charCodeAt(i));
+      }
+    };
+
+    writeString(0, 'RIFF');
+    view.setUint32(4, 36 + dataSize, true);
+    writeString(8, 'WAVE');
+    writeString(12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, channelCount, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, byteRate, true);
+    view.setUint16(32, blockAlign, true);
+    view.setUint16(34, 16, true);
+    writeString(36, 'data');
+    view.setUint32(40, dataSize, true);
+
+    const channels: Float32Array[] = [];
+    for (let ch = 0; ch < channelCount; ch += 1) {
+      channels.push(audioBuffer.getChannelData(ch));
+    }
+
+    let offset = 44;
+    for (let i = 0; i < numFrames; i += 1) {
+      for (let ch = 0; ch < channelCount; ch += 1) {
+        const sample = Math.max(-1, Math.min(1, channels[ch][i]));
+        view.setInt16(offset, Math.round(sample * 32767), true);
+        offset += 2;
+      }
+    }
+
+    return new Blob([buffer], { type: 'audio/wav' });
+  }
 
   /** Whether the player is currently loading */
   private _isLoading: boolean = false;

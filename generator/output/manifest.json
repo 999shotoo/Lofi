@@ -1,0 +1,216 @@
+{
+  "tracks": [
+    {
+      "filename": "lofi_2024-01-15T10-30-00_abc123",
+      "timestamp": "2024-01-15T10:30:00.000Z",
+      "type": "api",
+      "title": "LoFi track in G ionian",
+      "key": 8,
+      "mode": 1,
+      "bpm": 85,
+      "energy": 0.45,
+      "valence": 0.62
+    },
+    {
+      "filename": "lofi_lyrics_2024-01-15T10-35-00_def456",
+      "timestamp": "2024-01-15T10:35:00.000Z",
+      "type": "lyrics2lofi",
+      "title": "rainy day in the city",
+      "key": 3,
+      "mode": 6,
+      "bpm": 75,
+      "energy": 0.35,
+      "valence": 0.3
+    },
+    {
+      "filename": "lofi_20260503_151844_1",
+      "timestamp": "2026-05-03T15:18:44.611130",
+      "type": "random",
+      "key": 3,
+      "mode": 7,
+      "bpm": 85,
+      "energy": 0.42,
+      "valence": 0.85
+    },
+    {
+      "filename": "lofi_20260503_151844_2",
+      "timestamp": "2026-05-03T15:18:44.613260",
+      "type": "random",
+      "key": 10,
+      "mode": 7,
+      "bpm": 75,
+      "energy": 0.77,
+      "valence": 0.45
+    },
+    {
+      "filename": "lofi_20260503_151844_3",
+      "timestamp": "2026-05-03T15:18:44.615980",
+      "type": "random",
+      "key": 5,
+      "mode": 1,
+      "bpm": 75,
+      "energy": 0.88,
+      "valence": 0.45
+    },
+    {
+      "filename": "lofi_lyrics_20260503_151852",
+      "timestamp": "2026-05-03T15:18:52.211432",
+      "type": "lyrics2lofi",
+      "key": 3,
+      "mode": 6,
+      "bpm": 75,
+      "energy": 0.35,
+      "valence": 0.7
+    },
+    {
+      "filename": "lofi_20260503_151852_1",
+      "timestamp": "2026-05-03T15:18:52.213182",
+      "type": "random",
+      "key": 9,
+      "mode": 7,
+      "bpm": 75,
+      "energy": 0.38,
+      "valence": 0.47
+    },
+    {
+      "filename": "lofi_latent_20260503_151907",
+      "timestamp": "2026-05-03T15:19:07.860818",
+      "type": "lofi2lofi",
+      "key": 8,
+      "mode": 6,
+      "bpm": 100,
+      "energy": 0.24,
+      "valence": 0.76
+    },
+    {
+      "filename": "lofi_20260503_151907_1",
+      "timestamp": "2026-05-03T15:19:07.862984",
+      "type": "random",
+      "key": 2,
+      "mode": 6,
+      "bpm": 75,
+      "energy": 0.76,
+      "valence": 0.16
+    },
+    {
+      "filename": "lofi_20260503_152042_1",
+      "timestamp": "2026-05-03T15:20:42.491188",
+      "type": "random",
+      "key": 4,
+      "mode": 5,
+      "bpm": 85,
+      "energy": 0.93,
+      "valence": 0.64
+    },
+    {
+      "filename": "lofi_20260503_152042_2",
+      "timestamp": "2026-05-03T15:20:42.493659",
+      "type": "random",
+      "key": 10,
+      "mode": 7,
+      "bpm": 75,
+      "energy": 0.81,
+      "valence": 0.86
+    },
+    {
+      "filename": "lofi_20260503_152042_3",
+      "timestamp": "2026-05-03T15:20:42.495558",
+      "type": "random",
+      "key": 4,
+      "mode": 4,
+      "bpm": 80,
+      "energy": 0.21,
+      "valence": 0.14
+    },
+    {
+      "filename": "lofi_lyrics_20260503_152042",
+      "timestamp": "2026-05-03T15:20:42.586827",
+      "type": "lyrics2lofi",
+      "key": 4,
+      "mode": 1,
+      "bpm": 70,
+      "energy": 0.4,
+      "valence": 0.51
+    },
+    {
+      "filename": "lofi_20260503_152042_1",
+      "timestamp": "2026-05-03T15:20:42.588746",
+      "type": "random",
+      "key": 4,
+      "mode": 3,
+      "bpm": 80,
+      "energy": 0.63,
+      "valence": 0.77
+    },
+    {
+      "filename": "lofi_20260503_152108_1",
+      "timestamp": "2026-05-03T15:21:08.665406",
+      "type": "random",
+      "key": 6,
+      "mode": 7,
+      "bpm": 100,
+      "energy": 0.68,
+      "valence": 0.79
+    },
+    {
+      "filename": "lofi_20260503_152108_2",
+      "timestamp": "2026-05-03T15:21:08.667916",
+      "type": "random",
+      "key": 2,
+      "mode": 1,
+      "bpm": 90,
+      "energy": 0.83,
+      "valence": 0.2
+    },
+    {
+      "filename": "lofi_20260503_152108_3",
+      "timestamp": "2026-05-03T15:21:08.669887",
+      "type": "random",
+      "key": 9,
+      "mode": 7,
+      "bpm": 75,
+      "energy": 0.55,
+      "valence": 0.72
+    },
+    {
+      "filename": "lofi_lyrics_20260503_152108",
+      "timestamp": "2026-05-03T15:21:08.759318",
+      "type": "lyrics2lofi",
+      "key": 4,
+      "mode": 1,
+      "bpm": 70,
+      "energy": 0.4,
+      "valence": 0.51
+    },
+    {
+      "filename": "lofi_20260503_152108_1",
+      "timestamp": "2026-05-03T15:21:08.761618",
+      "type": "random",
+      "key": 11,
+      "mode": 1,
+      "bpm": 80,
+      "energy": 0.99,
+      "valence": 0.73
+    },
+    {
+      "filename": "lofi_latent_20260503_152108",
+      "timestamp": "2026-05-03T15:21:08.846637",
+      "type": "lofi2lofi",
+      "key": 4,
+      "mode": 7,
+      "bpm": 90,
+      "energy": 0.13,
+      "valence": 0.27
+    },
+    {
+      "filename": "lofi_20260503_152108_1",
+      "timestamp": "2026-05-03T15:21:08.849365",
+      "type": "random",
+      "key": 2,
+      "mode": 6,
+      "bpm": 100,
+      "energy": 0.09,
+      "valence": 0.56
+    }
+  ]
+}
